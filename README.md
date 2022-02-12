@@ -1,7 +1,7 @@
 [![license](https://img.shields.io/badge/License-LGPL_v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
 # cgeditor: Chess Game Editor
-cgeditor is a dependency-free chess game editor written in C++. It can be used with any library that provides 2D canvas drawing and mouse inputs features.
+cgeditor is a dependency-free chess game editor library written in C++. It can be used with any library that provides 2D canvas drawing and mouse inputs features.
 
 # Features
 - Show move,move number, variations, comments etc.
