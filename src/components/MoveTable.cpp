@@ -105,7 +105,7 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
     if (m->move.size() > 0) {
       char c = m->move[0];
       if (!(c == 'a' || c == 'b' || c == 'c' || c == 'd' || c == 'e' ||
-            c == 'f' || c == 'O' || c == '0')) {
+            c == 'f' || c == 'g' || c == 'h' || c == 'O' || c == '0')) {
         e.text = m->move.substr(1, m->move.size());
         if (c == 'N') {
           img.prop |= Property::Knight;
@@ -190,8 +190,7 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
                                      const char &indent_black) {
   // Show three dots
   if (!m->IsBlack) {
-    DRAW_DOTS(status->MarginBarWidth +
-                  status->MoveWidth * (indent + 1) +
+    DRAW_DOTS(status->MarginBarWidth + status->MoveWidth * (indent + 1) +
                   ((indent + 1) / 2 * status->MarginBarWidth),
               status->MoveHeight * line);
   }
@@ -237,8 +236,7 @@ std::uint32_t MoveTable::DrawVariations(CGEHalfMove *m, std::uint32_t line,
                                         const char &indent_black) {
   // Show three dots next to move if white turn
   if ((m->variations.size() == 0) && !m->IsBlack) {
-    DRAW_DOTS(status->MarginBarWidth +
-                  status->MoveWidth * (indent + 1),
+    DRAW_DOTS(status->MarginBarWidth + status->MoveWidth * (indent + 1),
               status->MoveHeight * line);
   }
   // Show button on the right side of the move
@@ -266,8 +264,7 @@ std::uint32_t MoveTable::DrawVariations(CGEHalfMove *m, std::uint32_t line,
       {
         Element e;
         e.prop = Property::Rectangle | Property::Button;
-        e.x = (status->MarginBarWidth +
-               status->MoveWidth * indent) +
+        e.x = (status->MarginBarWidth + status->MoveWidth * indent) +
               status->MoveWidth - std::ceil(status->MoveHeight / 2) -
               std::ceil(status->MoveHeight / 4);
         e.y = (status->MoveHeight * (line + 1)) +
