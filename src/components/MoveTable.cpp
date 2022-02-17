@@ -92,7 +92,7 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
   if (status->UseMoveIcons) {
     // Image
     Element img;
-    img.prop = Property::Image | Property::Move;
+    img.prop = move_bound.prop | Property::Image;
     img.x = move_bound.x;
     img.y = status->MoveHeight * line;
     img.width = status->MoveIconWidth;
