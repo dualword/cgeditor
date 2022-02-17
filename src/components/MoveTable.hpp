@@ -48,7 +48,6 @@ namespace cgeditor {
 class MoveTable : public Component {
   std::uint32_t UpdateMoves(CGEHalfMove *, std::uint32_t, std::uint32_t,bool only_black);
   std::int32_t CurrentMove;
-  double ImageWidth;
   std::vector<Element> VariationMargins;
   bool IsMouseOver(const Element &e) const;
   std::uint32_t DrawComment(CGEHalfMove *m, std::uint32_t line, std::uint32_t indent,

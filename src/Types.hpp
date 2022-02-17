@@ -23,7 +23,13 @@ enum class Property : std::uint32_t {
   Dots = 1 << 13,        // Move dots
   Movenumber = 1 << 14,
   Current = 1 << 15,
-  Mouseover = 1 << 16 // Set on every element where mouse is over
+  Mouseover = 1 << 16, // Set on every element where mouse is over
+  Pawn = 1 << 17,
+  Knight = 1 << 18,
+  Bishop = 1 << 19,
+  Rook = 1 << 20,
+  Queen = 1 << 21,
+  King = 1 << 22
 };
 Property operator|(Property lhs, Property rhs);
 Property &operator|=(Property &lhs, Property rhs);
@@ -64,6 +70,7 @@ typedef struct Status {
   double MoveWidth = 100, MoveHeight = 50;
   double MarginBarWidth = 50;
   double ScrollbarWidth = 30;
+  double MoveIconWidth = 25;
   double MenuX, MenuY;
   double MoveX, MoveY;
   std::uint16_t CommentLinePerRow = 2;
@@ -75,7 +82,7 @@ typedef struct Status {
   bool LeftClick, RightClick;
   /// @brief Can be use to close the menu
   bool IsMenuOpen = false;
-  bool UseMoveImages = false;
+  bool UseMoveIcons = false;
   double MoveTableMaxX = 0, MoveTableMaxY = 0;
   /// @brief User should set it to true when mouse is dragging
   bool IsDrag = false;

@@ -34,8 +34,8 @@ private:
     wxSize sz = GetClientSize();
     CGEditor::status.CanvasWidth = sz.GetWidth();
     CGEditor::status.CanvasHeight = sz.GetHeight();
-    CGEditor::status.UseMoveImages =
-        false; // Piece image should be drawn before the move ?
+    CGEditor::status.UseMoveIcons =
+        true; // Piece image should be drawn before the move ?
 
     const wxPoint pt = wxGetMousePosition();
     CGEditor::status.MouseX = pt.x - this->GetScreenPosition().x;
@@ -133,7 +133,7 @@ private:
             dc->SetBrush(*wxLIGHT_GREY_BRUSH);
             dc->DrawRectangle(recToDraw);
           }
-          if (CGEditor::status.UseMoveImages) {
+          if (CGEditor::status.UseMoveIcons) {
             dc->DrawText(wxString(e.text), wxPoint(e.x, Middle(e).y));
           } else {
             dc->DrawText(wxString(e.text), Middle(e));

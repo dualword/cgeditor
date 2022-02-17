@@ -2,9 +2,8 @@
 
 namespace cgeditor {
 
-MoveTable::MoveTable(Status *s) : Component(s) {
-  ImageWidth = status->MoveWidth * 0.25; // Image is 25% of the cell
-}
+MoveTable::MoveTable(Status *s) : Component(s) {}
+
 void MoveTable::Refresh() {
   status->MoveTableMaxX = 0;
   status->MoveTableMaxY = 0;
@@ -16,7 +15,7 @@ void MoveTable::Refresh() {
     // We only set the type after the call to UpdateMoves()
     // This way only a single move will be the current move
     if (CurrentMove >= 0) {
-      if (status->UseMoveImages) {
+      if (status->UseMoveIcons) {
         elements[CurrentMove].prop |= Property::Current;
         elements[CurrentMove + 1].prop |= Property::Current;
       } else {
@@ -90,13 +89,13 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
   }
 
   //---------- Draw move ----------
-  if (status->UseMoveImages) {
+  if (status->UseMoveIcons) {
     // Image
     Element img;
     img.prop = Property::Image | Property::Move;
     img.x = move_bound.x;
     img.y = status->MoveHeight * line;
-    img.width = ImageWidth;
+    img.width = status->MoveIconWidth;
     img.height = status->MoveHeight;
     img.ShouldApplyScroll = true;
     elements.push_back(img);
@@ -104,9 +103,29 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
     Element e;
     e.prop = move_bound.prop | Property::Text;
     e.text = m->move;
-    e.x = ImageWidth + move_bound.x;
+    if (m->move.size() > 0) {
+      char c = m->move[0];
+      if (!(c == 'a' || c == 'b' || c == 'c' || c == 'd' || c == 'e' ||
+            c == 'f' || c == 'O' || c == '0')) {
+        e.text = m->move.substr(1, m->move.size());
+        if (c == 'N') {
+          e.prop |= Property::Knight;
+        } else if (c == 'B') {
+          e.prop |= Property::Bishop;
+        } else if (c == 'R') {
+          e.prop |= Property::Rook;
+        } else if (c == 'Q') {
+          e.prop |= Property::Queen;
+        } else {
+          e.prop |= Property::King;
+        }
+      } else {
+        e.prop |= Property::Pawn;
+      }
+    }
+    e.x = status->MoveIconWidth + move_bound.x;
     e.y = status->MoveHeight * line;
-    e.width = status->MoveWidth - ImageWidth;
+    e.width = status->MoveWidth - status->MoveIconWidth;
     e.height = status->MoveHeight;
     e.ShouldApplyScroll = true;
     elements.push_back(e);
