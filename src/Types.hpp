@@ -71,8 +71,6 @@ typedef struct Status {
   double MarginBarWidth = 50;
   double ScrollbarWidth = 30;
   double MoveIconWidth = 25;
-  double MenuX, MenuY;
-  double MoveX, MoveY;
   std::uint16_t CommentLinePerRow = 2;
   /// @brief Ask the editor to scroll for a specific amout of pixels
   double EventVScroll = 0, EventHScroll = 0;

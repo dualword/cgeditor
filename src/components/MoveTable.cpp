@@ -60,7 +60,7 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
   if (m->IsBlack) {
     move_bound.prop |= Property::Black;
   }
-  move_bound.x = status->MarginBarWidth + status->MoveX +
+  move_bound.x = status->MarginBarWidth +
                  status->MoveWidth * (indent + indent_black) +
                  ((indent + 1) / 2 * status->MarginBarWidth);
   move_bound.y = status->MoveHeight * line;
@@ -190,7 +190,7 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
                                      const char &indent_black) {
   // Show three dots
   if (!m->IsBlack) {
-    DRAW_DOTS(status->MarginBarWidth + status->MoveX +
+    DRAW_DOTS(status->MarginBarWidth +
                   status->MoveWidth * (indent + 1) +
                   ((indent + 1) / 2 * status->MarginBarWidth),
               status->MoveHeight * line);
@@ -237,7 +237,7 @@ std::uint32_t MoveTable::DrawVariations(CGEHalfMove *m, std::uint32_t line,
                                         const char &indent_black) {
   // Show three dots next to move if white turn
   if ((m->variations.size() == 0) && !m->IsBlack) {
-    DRAW_DOTS(status->MarginBarWidth + status->MoveX +
+    DRAW_DOTS(status->MarginBarWidth +
                   status->MoveWidth * (indent + 1),
               status->MoveHeight * line);
   }
@@ -266,7 +266,7 @@ std::uint32_t MoveTable::DrawVariations(CGEHalfMove *m, std::uint32_t line,
       {
         Element e;
         e.prop = Property::Rectangle | Property::Button;
-        e.x = (status->MarginBarWidth + status->MoveX +
+        e.x = (status->MarginBarWidth +
                status->MoveWidth * indent) +
               status->MoveWidth - std::ceil(status->MoveHeight / 2) -
               std::ceil(status->MoveHeight / 4);
