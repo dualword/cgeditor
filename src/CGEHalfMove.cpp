@@ -33,6 +33,10 @@ void CGEHalfMove::SetComment(const std::string &c) {
     }
     this->comment = c;
   }
+  else {
+    this->comment="";
+    NbLineComment=0;
+  }
 }
 
 std::string CGEHalfMove::GetComment() { return (comment); }
