@@ -98,7 +98,6 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
     img.width = status->MoveIconWidth;
     img.height = status->MoveHeight;
     img.ShouldApplyScroll = true;
-    elements.push_back(img);
     // Move
     Element e;
     e.prop = move_bound.prop | Property::Text;
@@ -109,18 +108,18 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
             c == 'f' || c == 'O' || c == '0')) {
         e.text = m->move.substr(1, m->move.size());
         if (c == 'N') {
-          e.prop |= Property::Knight;
+          img.prop |= Property::Knight;
         } else if (c == 'B') {
-          e.prop |= Property::Bishop;
+          img.prop |= Property::Bishop;
         } else if (c == 'R') {
-          e.prop |= Property::Rook;
+          img.prop |= Property::Rook;
         } else if (c == 'Q') {
-          e.prop |= Property::Queen;
+          img.prop |= Property::Queen;
         } else {
-          e.prop |= Property::King;
+          img.prop |= Property::King;
         }
       } else {
-        e.prop |= Property::Pawn;
+        img.prop |= Property::Pawn;
       }
     }
     e.x = status->MoveIconWidth + move_bound.x;
@@ -128,6 +127,7 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
     e.width = status->MoveWidth - status->MoveIconWidth;
     e.height = status->MoveHeight;
     e.ShouldApplyScroll = true;
+    elements.push_back(img);
     elements.push_back(e);
   } else {
     move_bound.prop |= Property::Text;
