@@ -24,6 +24,8 @@ public:
   std::uint16_t Number;
   /// @brief Current move value
   std::string move;
+  /// @brief Current NAG
+  std::string nag;
 
   CGEHalfMove *MainLine;
   CGEHalfMove *Parent;

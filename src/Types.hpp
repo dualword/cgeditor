@@ -29,7 +29,8 @@ enum class Property : std::uint32_t {
   Bishop = 1 << 19,
   Rook = 1 << 20,
   Queen = 1 << 21,
-  King = 1 << 22
+  King = 1 << 22,
+  Nag = 1 << 23
 };
 Property operator|(Property lhs, Property rhs);
 Property &operator|=(Property &lhs, Property rhs);
@@ -68,6 +69,8 @@ typedef struct Status {
   double CanvasWidth, CanvasHeight;
   double MenuItemWidth = 150, MenuItemHeight = 50;
   double MoveWidth = 100, MoveHeight = 50;
+  double NagWidth = 25, NagHeight = MoveHeight;
+  double NagRightMargin = 0;
   double MarginBarWidth = 50;
   double ScrollbarWidth = 30;
   double MoveIconWidth = 25;

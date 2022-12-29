@@ -127,11 +127,25 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
     e.width = status->MoveWidth - status->MoveIconWidth;
     e.height = status->MoveHeight;
     e.ShouldApplyScroll = true;
+    // Add elements:
     elements.push_back(img);
     elements.push_back(e);
   } else {
     move_bound.prop |= Property::Text;
     elements.push_back(move_bound);
+  }
+
+  //---------- NAG ----------
+  if(m->nag.size()>0){
+    Element nag;
+    nag.text = m->nag;
+    nag.x = move_bound.x + status->MoveWidth - status->NagWidth - status->NagRightMargin;
+    nag.y = status->MoveHeight * line;
+    nag.width = status->NagWidth;
+    nag.height = status->NagHeight;
+    nag.prop = move_bound.prop | Property::Text | Property::Nag;
+    nag.ShouldApplyScroll = true;
+    elements.push_back(nag);
   }
 
   //---------- Move number in marge or for variation ----------

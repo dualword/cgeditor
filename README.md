@@ -4,7 +4,7 @@
 cgeditor is a dependency-free chess game editor library written in C++. It can be used with any library that provides 2D canvas drawing and mouse inputs features.
 
 # Features
-- Show move,move number, variations, comments etc.
+- Show move,move number, variations, NAGs, comments etc.
 - *Delete*, *Promote* and *Set as main line* features
 - Handle pieces icons
 - Its graphical appareance is entirely customizable

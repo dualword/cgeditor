@@ -144,7 +144,7 @@ MyHalfMove *BuildExampleGame() {
   m->SetMainline(m2);
   m = m2;
 
-  m2 = new MyHalfMove("o-o");
+  m2 = new MyHalfMove("O-O");
   m->SetMainline(m2);
   m = m2;
 
@@ -196,10 +196,11 @@ MyHalfMove *BuildExampleGame() {
   m = m2;
 
   m2 = new MyHalfMove("Re1");
+  m2->nag="!!";
   m->SetMainline(m2);
   m = m2;
 
-  m2 = new MyHalfMove("o-o");
+  m2 = new MyHalfMove("O-O");
   m->SetMainline(m2);
   m = m2;
 
