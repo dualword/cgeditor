@@ -73,6 +73,9 @@ typedef struct Status {
   double NagRightMargin = 0;
   double MarginBarWidth = 50;
   double ScrollbarWidth = 30;
+  double TextCharWidth=14, TextCharHeight=24;
+  /// @brief How many char per line for comments
+  std::uint16_t CharPerLine=100;
   double MoveIconWidth = 25;
   std::uint16_t CommentLinePerRow = 2;
   /// @brief Ask the editor to scroll for a specific amout of pixels

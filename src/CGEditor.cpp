@@ -77,7 +77,8 @@ void CGEditor::CallDrawElement(Element e) {
       e.y += status.ScrollY;
     }
   }
-
+    DrawElement(e);
+return;
   // Check if element is visible
   if (((e.x) >= 0 && ((e.x) <= status.CanvasWidth) && (e.y) >= 0 &&
        ((e.y) <= status.CanvasHeight)) ||

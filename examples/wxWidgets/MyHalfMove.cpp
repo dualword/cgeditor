@@ -128,7 +128,7 @@ MyHalfMove *BuildExampleGame() {
 
   m2 = new MyHalfMove("Bc4");
   m->SetMainline(m2);
-  m->SetComment("Italian Opening");
+  m->comment="Italian Opening";
   m = m2;
 
   m2 = new MyHalfMove("Bc5");
@@ -136,7 +136,7 @@ MyHalfMove *BuildExampleGame() {
   m = m2;
 
   m2 = new MyHalfMove("c3");
-  m2->SetComment("Giuoco Pianissimo");
+  m2->comment="Giuoco Pianissimo";
   m->SetMainline(m2);
   m = m2;
 
@@ -158,7 +158,7 @@ MyHalfMove *BuildExampleGame() {
 
   {
     MyHalfMove *var = new MyHalfMove("Re1");
-    var->SetComment("Also possible");
+    var->comment="Also possible";
     m->AddVariation(var);
 
     MyHalfMove *var2 = new MyHalfMove("a6");
@@ -185,6 +185,8 @@ MyHalfMove *BuildExampleGame() {
 
   m2 = new MyHalfMove("a6");
   m->SetMainline(m2);
+  m->comment="Test for a very long comment, to see how line breaks are handle by the framework.";
+  m->comment+="Test for a very long comment, to see how line breaks are handle by the framework.";
   m = m2;
 
   m2 = new MyHalfMove("Bb3");

@@ -10,10 +10,6 @@ namespace cgeditor {
  *
  */
 class CGEHalfMove {
-  /// @brief Comment linked to the move
-  std::string comment;
-  /// @brief Number of line in @a comment
-  std::uint16_t NbLineComment = 0;
 
 public:
   CGEHalfMove();
@@ -26,6 +22,8 @@ public:
   std::string move;
   /// @brief Current NAG
   std::string nag;
+  /// @brief Comment linked to the move
+  std::string comment;
 
   CGEHalfMove *MainLine;
   CGEHalfMove *Parent;
@@ -37,12 +35,6 @@ public:
   /// @brief Variations of the move
   std::vector<CGEHalfMove *> variations;
 
-  /// @brief Set comment and update number of lines
-  void SetComment(const std::string &c);
-  /// @brief Get current value of comment
-  std::string GetComment();
-  /// @brief Get number of lines in comment
-  std::uint16_t GetNbLineComment();
   /// @brief Remove a move from the MainLine and/or variations
   void RemoveChild(CGEHalfMove *m);
 };

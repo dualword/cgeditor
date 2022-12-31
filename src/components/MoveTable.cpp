@@ -1,4 +1,5 @@
 #include "MoveTable.hpp"
+#include <iostream>
 
 namespace cgeditor {
 
@@ -175,7 +176,7 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
   }
 
   //---------- Comments ----------
-  if (m->GetNbLineComment() > 0) {
+  if (m->comment.size() > 0) {
     line = DrawComment(m, line, indent, move_bound, indent_black);
   }
 
@@ -187,7 +188,7 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
   //---------- Mainline ----------
   if (m->MainLine != NULL) {
     only_black = (m->MainLine->IsBlack &&
-                  (m->GetNbLineComment() > 0 || m->variations.size()));
+                  (m->comment.size() > 0 || m->variations.size()));
     if (m->IsBlack) {
       line = UpdateMoves(m->MainLine, line + 1, indent, only_black);
     } else {
@@ -210,32 +211,59 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
   }
   // Print comment
   line++;
-  // Computer number of rows for the comment
-  std::uint16_t CommentRows = m->GetNbLineComment() / status->CommentLinePerRow;
-  if (m->GetNbLineComment() % status->CommentLinePerRow > 0) {
-    CommentRows++;
-  }
-  // Draw comment
+
+
+  /// ----- Compute comment bounding box values
+  int nchar=m->comment.size();
+  int nline=ceil((double)nchar/(double)status->CharPerLine);
+  std::uint16_t nrow=ceil((nline*status->TextCharHeight)/status->MoveHeight);
+  std::cout << nrow <<std::endl;
+  int width=status->CharPerLine*status->TextCharWidth;
+  int height=nrow*status->MoveHeight;
+
+  // Draw comment background
   Element e;
-  e.prop = Property::Text | Property::Comment;
+  e.prop = Property::Rectangle | Property::Comment;
   e.x = move_bound.x -
         (indent_black *
          status->MoveWidth); // status->MarginBarWidth + status->MoveX;
   e.y = status->MoveHeight * line;
   e.width = -1; // Negative width means expands to the edge of the canvas
-  e.height = CommentRows * status->MoveHeight;
-  e.text = m->GetComment();
+  e.height = height;
   e.ShouldApplyScroll = true;
   elements.push_back(e);
-  // Do not forget to add marging before comment
+  // Update scrolling
+  if ((e.x + width) > status->MoveTableMaxX) {
+    status->MoveTableMaxX = e.x + width;
+  }
+  if ((e.y + height) > status->MoveTableMaxY) {
+    status->MoveTableMaxY = e.y + height;
+  }
+  // Handle events:
+  if (status->LeftClick && IsMouseOver(e)) {
+    status->Events.push_back({Event::Type::CommentSelected, m});
+  }
+  // Now draw each lines of the comment:
+  Element l;
+  l.prop = Property::Comment|Property::Text;
+  l.x=e.x;
+  l.y=e.y;
+  std::cout <<"x=" << l.x << " y="<<l.y<< " width="<<width<<std::endl;
+  l.width=width;
+  l.height=status->MoveHeight;
+  l.ShouldApplyScroll = true;
+  for(int i=0;i<nline;i++){
+    std::cout << "BAM!" << std::endl;
+    l.text=m->comment.substr(i*status->CharPerLine,status->CharPerLine);
+    elements.push_back(l);
+    l.y+=status->TextCharHeight;
+  }
+  // Do not forget to add marging before comment if indented:
   if (indent > 0) {
     e.x -= status->MarginBarWidth;
     VariationMargins.push_back(e);
   }
-  if (status->LeftClick && IsMouseOver(e)) {
-    status->Events.push_back({Event::Type::CommentSelected, m});
-  }
-  line += CommentRows; // Skip right amount of lines
+  line += nrow; // Skip right amount of lines
   // Since we already increment line for black later on:
   if (m->IsBlack || m->variations.size() > 0) {
     line--;

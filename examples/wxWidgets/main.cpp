@@ -29,6 +29,9 @@ private:
   void OnPaint(wxPaintEvent &event) {
     wxPaintDC current_dc(this);
     dc = &current_dc;
+    wxSize fontsize=dc->GetTextExtent("a");
+
+    wxLogDebug("width=%d, height=%d",fontsize.x,fontsize.y);
 
     // Refresh canvas size
     wxSize sz = GetClientSize();
@@ -105,6 +108,8 @@ private:
         dc->SetBrush(*wxLIGHT_GREY_BRUSH);
       } else if (e.prop & cgeditor::Property::Button) {
         dc->SetBrush(*wxBLACK_BRUSH);
+      } else if (e.prop & cgeditor::Property::Comment) {
+        dc->SetBrush(*wxYELLOW_BRUSH);
       }
       wxRect recToDraw(e.x, e.y, e.width, e.height);
       dc->DrawRectangle(recToDraw);
@@ -118,7 +123,7 @@ private:
         dc->DrawText(wxString(e.text), Middle(e));
       } else if (e.prop & cgeditor::Property::Comment) {
         wxRect recToDraw(e.x, e.y, e.width, e.height);
-        dc->SetBrush(*wxYELLOW_BRUSH);
+        dc->SetBrush(*wxBLUE_BRUSH);
         dc->DrawRectangle(recToDraw);
         dc->DrawText(wxString(e.text), wxPoint(e.x, e.y));
       } else if (e.prop & cgeditor::Property::Menuitem) {

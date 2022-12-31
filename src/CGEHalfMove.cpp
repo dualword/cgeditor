@@ -23,26 +23,6 @@ CGEHalfMove::CGEHalfMove(std::string move)
   this->move = move;
 }
 
-void CGEHalfMove::SetComment(const std::string &c) {
-  if (c.size() > 0) {
-    NbLineComment = 1;
-    for (const char &c : c) {
-      if (c == '\n') {
-        NbLineComment++;
-      }
-    }
-    this->comment = c;
-  }
-  else {
-    this->comment="";
-    NbLineComment=0;
-  }
-}
-
-std::string CGEHalfMove::GetComment() { return (comment); }
-
-std::uint16_t CGEHalfMove::GetNbLineComment() { return (this->NbLineComment); }
-
 void CGEHalfMove::RemoveChild(CGEHalfMove *m) {
   std::uint32_t i = 0;
   bool found = false;
