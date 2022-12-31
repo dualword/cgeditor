@@ -78,7 +78,7 @@ typedef struct Status {
   /// @brief The following is not a "precise" padding since we add online a multiple of MoveHeight
   std::uint8_t CommentPadding=5;
   /// @brief How many char per line for comments
-  std::uint16_t CommentCharPerLine=20;
+  std::uint16_t CommentCharPerLine=50;
   double MoveIconWidth = 25;
   /// @brief Ask the editor to scroll for a specific amout of pixels
   double EventVScroll = 0, EventHScroll = 0;
