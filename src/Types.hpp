@@ -73,11 +73,13 @@ typedef struct Status {
   double NagRightMargin = 0;
   double MarginBarWidth = 50;
   double ScrollbarWidth = 30;
-  double TextCharWidth=14, TextCharHeight=24;
+  /// @brief The following is not very accuracy but at least work for computing comments bounding boxes and placement
+  double CommentCharWidth=9, CommentCharHeight=24;
+  /// @brief The following is not a "precise" padding since we add online a multiple of MoveHeight
+  std::uint8_t CommentPadding=5;
   /// @brief How many char per line for comments
-  std::uint16_t CharPerLine=100;
+  std::uint16_t CommentCharPerLine=20;
   double MoveIconWidth = 25;
-  std::uint16_t CommentLinePerRow = 2;
   /// @brief Ask the editor to scroll for a specific amout of pixels
   double EventVScroll = 0, EventHScroll = 0;
   /// @brief Amount of pixel to scroll elements

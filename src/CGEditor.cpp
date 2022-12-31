@@ -1,5 +1,5 @@
 #include "CGEditor.hpp"
-
+#include <iostream>
 namespace cgeditor {
 
 CGEditor::CGEditor() {
@@ -77,18 +77,19 @@ void CGEditor::CallDrawElement(Element e) {
       e.y += status.ScrollY;
     }
   }
-    DrawElement(e);
-return;
-  // Check if element is visible
-  if (((e.x) >= 0 && ((e.x) <= status.CanvasWidth) && (e.y) >= 0 &&
-       ((e.y) <= status.CanvasHeight)) ||
-      ((e.x + e.width) >= 0 && ((e.x + e.width) <= status.CanvasWidth) &&
-       (e.y + e.height) >= 0 && ((e.y + e.height) <= status.CanvasHeight))) {
-    if (e.IsOver(status.MouseX, status.MouseY)) {
-      e.prop |= Property::Mouseover;
-    }
-    DrawElement(e);
+
+  // Check if element visible if not just leave
+  if((e.x+e.width)<0 || status.CanvasWidth < e.x)
+    return;
+  if((e.y+e.height)<0 || status.CanvasHeight < e.y)
+    return;
+  
+  // Check if mouse over
+  if (e.IsOver(status.MouseX, status.MouseY)) {
+    e.prop |= Property::Mouseover;
   }
+
+  DrawElement(e);
 }
 
 void CGEditor::DrawComponent(Component *c) {

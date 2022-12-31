@@ -209,16 +209,13 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
                   ((indent + 1) / 2 * status->MarginBarWidth),
               status->MoveHeight * line);
   }
-  // Print comment
-  line++;
-
+  line++; // Goto the right line
 
   /// ----- Compute comment bounding box values
   int nchar=m->comment.size();
-  int nline=ceil((double)nchar/(double)status->CharPerLine);
-  std::uint16_t nrow=ceil((nline*status->TextCharHeight)/status->MoveHeight);
-  std::cout << nrow <<std::endl;
-  int width=status->CharPerLine*status->TextCharWidth;
+  int nline=ceil((double)nchar/(double)status->CommentCharPerLine);
+  std::uint16_t nrow=ceil(((nline*status->CommentCharHeight)+2*status->CommentPadding)/status->MoveHeight);
+  int width=status->CommentCharPerLine*status->CommentCharWidth+2*status->CommentPadding;
   int height=nrow*status->MoveHeight;
 
   // Draw comment background
@@ -244,19 +241,21 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
     status->Events.push_back({Event::Type::CommentSelected, m});
   }
   // Now draw each lines of the comment:
-  Element l;
+  Element l; // One line
   l.prop = Property::Comment|Property::Text;
-  l.x=e.x;
-  l.y=e.y;
-  std::cout <<"x=" << l.x << " y="<<l.y<< " width="<<width<<std::endl;
+  l.x=e.x+status->CommentPadding;
+  l.y=e.y+status->CommentPadding;
   l.width=width;
-  l.height=status->MoveHeight;
+  l.height=status->CommentCharHeight;
   l.ShouldApplyScroll = true;
   for(int i=0;i<nline;i++){
-    std::cout << "BAM!" << std::endl;
-    l.text=m->comment.substr(i*status->CharPerLine,status->CharPerLine);
+    l.text=m->comment.substr(i*status->CommentCharPerLine,status->CommentCharPerLine);
+    // Remove leading space:
+    if(l.text.size()>2 && l.text[0]==' '){
+      l.text=l.text.substr(1,l.text.size());
+    }
     elements.push_back(l);
-    l.y+=status->TextCharHeight;
+    l.y+=status->CommentCharHeight;
   }
   // Do not forget to add marging before comment if indented:
   if (indent > 0) {

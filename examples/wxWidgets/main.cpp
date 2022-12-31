@@ -29,9 +29,10 @@ private:
   void OnPaint(wxPaintEvent &event) {
     wxPaintDC current_dc(this);
     dc = &current_dc;
-    wxSize fontsize=dc->GetTextExtent("a");
 
-    wxLogDebug("width=%d, height=%d",fontsize.x,fontsize.y);
+    // Just in case you want to fetch font sizes to configure comment text:
+    //wxSize fontsize=dc->GetTextExtent("a");
+    //wxLogDebug("width=%d, height=%d",fontsize.x,fontsize.y);
 
     // Refresh canvas size
     wxSize sz = GetClientSize();

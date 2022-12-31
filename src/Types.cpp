@@ -3,10 +3,10 @@
 namespace cgeditor {
 
 bool Element::IsOver(const double &X, const double &Y) const {
-  if (width < 0) {
-    return (x >= x && Y >= y && Y <= (y + height));
-  }
-  return ((X >= x && X <= (x + width) && Y >= y && Y <= (y + height)));
+  // Check if no overlap
+  if(X<x|| X>(x+width) || Y<y || Y>(y+height))
+    return false;
+  return true;
 }
 
 Property operator|(Property lhs, Property rhs) {
