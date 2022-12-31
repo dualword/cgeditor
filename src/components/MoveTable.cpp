@@ -211,14 +211,14 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
   }
   line++; // Goto the right line
 
-  /// ----- Compute comment bounding box values
+  /// ----- Compute comment bounding box values:
   int nchar=m->comment.size();
   int nline=ceil((double)nchar/(double)status->CommentCharPerLine);
   std::uint16_t nrow=ceil(((nline*status->CommentCharHeight)+2*status->CommentPadding)/status->MoveHeight);
   int width=status->CommentCharPerLine*status->CommentCharWidth+2*status->CommentPadding;
   int height=nrow*status->MoveHeight;
 
-  // Draw comment background
+  // ----- Draw comment background:
   Element e;
   e.prop = Property::Rectangle | Property::Comment;
   e.x = move_bound.x -
@@ -229,19 +229,19 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
   e.height = height;
   e.ShouldApplyScroll = true;
   elements.push_back(e);
-  // Update scrolling
+  // ----- Update scrolling:
   if ((e.x + width) > status->MoveTableMaxX) {
     status->MoveTableMaxX = e.x + width;
   }
   if ((e.y + height) > status->MoveTableMaxY) {
     status->MoveTableMaxY = e.y + height;
   }
-  // Handle events:
+  // ----- Handle events:
   if (status->LeftClick && IsMouseOver(e)) {
     status->Events.push_back({Event::Type::CommentSelected, m});
   }
-  // Now draw each lines of the comment:
-  Element l; // One line
+  // ----- Now draw each lines of the comment:
+  Element l; // One line of the comment
   l.prop = Property::Comment|Property::Text;
   l.x=e.x+status->CommentPadding;
   l.y=e.y+status->CommentPadding;
@@ -257,17 +257,16 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
     elements.push_back(l);
     l.y+=status->CommentCharHeight;
   }
-  // Do not forget to add marging before comment if indented:
+  // ----- Do not forget to add marging before comment if indented:
   if (indent > 0) {
     e.x -= status->MarginBarWidth;
     VariationMargins.push_back(e);
   }
   line += nrow; // Skip right amount of lines
-  // Since we already increment line for black later on:
+  // ----- Since we already increment line for black later on:
   if (m->IsBlack || m->variations.size() > 0) {
     line--;
   }
-
   return (line);
 }
 

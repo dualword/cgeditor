@@ -21,8 +21,8 @@ void Margin::DrawMargin(Element e) {
   elements.push_back(e);
 }
 
-void Margin::DrawMargin(std::vector<Element> elts) {
-  for(Element &e:elts){
+void Margin::DrawMargin(const std::vector<Element> &elts) {
+  for(Element e:elts){
     DrawMargin(e);
   }
 }

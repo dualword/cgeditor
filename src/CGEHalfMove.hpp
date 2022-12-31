@@ -14,7 +14,7 @@ class CGEHalfMove {
 public:
   CGEHalfMove();
   CGEHalfMove(CGEHalfMove *parent);
-  CGEHalfMove(std::string move);
+  CGEHalfMove(const std::string &move);
 
   /// @brief CUrrent move number
   std::uint16_t Number;

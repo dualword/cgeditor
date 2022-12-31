@@ -18,7 +18,7 @@ CGEHalfMove::CGEHalfMove(CGEHalfMove *parent) {
   }
 }
 
-CGEHalfMove::CGEHalfMove(std::string move)
+CGEHalfMove::CGEHalfMove(const std::string &move)
     : MainLine(NULL), IsBlack(false), Number(0), Parent(NULL) {
   this->move = move;
 }

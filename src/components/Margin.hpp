@@ -7,6 +7,6 @@ public:
   Margin(Status *s);
   void Refresh();
   void DrawMargin(Element e);
-  void DrawMargin(std::vector<Element> elts);
+  void DrawMargin(const std::vector<Element> &elts);
 };
 } // namespace cgeditor
