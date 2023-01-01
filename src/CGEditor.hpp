@@ -27,8 +27,6 @@ protected:
   void Draw();
   /// @brief Draw an element on the canvas
   virtual void DrawElement(const Element &) = 0;
-  /// @brief Handle event that occured during editor drawing
-  virtual void HandleEvent(const Event &) = 0;
 
 public:
   CGEditor();

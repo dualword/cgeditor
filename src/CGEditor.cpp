@@ -40,12 +40,6 @@ void CGEditor::Draw() {
   DrawComponent(SBH);
   DrawComponent(ME);
 
-  // Handle events
-  for (Event &e : status.Events) {
-    HandleEvent(e);
-  }
-  status.Events.clear();
-
   // Update mouse events
   status.LeftClick = false;
   status.RightClick = false;

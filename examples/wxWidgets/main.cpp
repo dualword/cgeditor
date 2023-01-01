@@ -12,7 +12,6 @@
  */
 class MyFrame : public wxFrame, public cgeditor::CGEditor {
   wxPaintDC *dc;
-  bool NeedRedraw = false;
 
 public:
   MyFrame()
@@ -72,10 +71,16 @@ private:
       Refresh();
     }
 
-    // Should another draw of CGEditor be made?
-    if (NeedRedraw) {
+    // Now handle event
+    bool redraw=false;
+    Update();
+    for(const cgeditor::Event &e: status.Events){
+      HandleEvent(e);
+      redraw=true;
+    }
+    status.Events.clear();
+    if(redraw){
       Refresh();
-      NeedRedraw = false;
     }
   }
 
@@ -163,7 +168,6 @@ private:
     else if (e.type == cgeditor::Event::Type::Promote) {
       str = "Promote";
       static_cast<MyHalfMove *>(e.move)->MyHalfMove::Promote();
-      NeedRedraw = true;
     } else if (e.type == cgeditor::Event::Type::Delete) {
       str = "Delete";
       if (e.move->Parent != NULL) {
@@ -172,11 +176,9 @@ private:
       } else {
         CGEditor::status.Moves = NULL;
       }
-      NeedRedraw = true;
     } else if (e.type == cgeditor::Event::Type::SetAsMainline) {
       str = "Set as main line";
       static_cast<MyHalfMove *>(e.move)->MyHalfMove::SetAsMainline();
-      NeedRedraw = true;
     } else if (e.type == cgeditor::Event::Type::Goto) {
       str = "Goto move";
     }
