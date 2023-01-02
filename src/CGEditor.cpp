@@ -98,7 +98,8 @@ bool CGEditor::ProcessEvents(){
     HandleEvent(e);
     processed=true;
   }
-  status.Events.clear();
+  if(processed)
+    status.Events.clear();
   return processed;
 }
 
