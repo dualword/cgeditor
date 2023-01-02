@@ -71,15 +71,9 @@ private:
       Refresh();
     }
 
-    // Now handle event
-    bool redraw=false;
+    // Now handle generated events from last user inputs
     Update();
-    for(const cgeditor::Event &e: status.Events){
-      HandleEvent(e);
-      redraw=true;
-    }
-    status.Events.clear();
-    if(redraw){
+    if(ProcessEvents()){
       Refresh();
     }
   }

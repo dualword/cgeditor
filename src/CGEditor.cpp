@@ -92,4 +92,14 @@ void CGEditor::DrawComponent(Component *c) {
   }
 }
 
+bool CGEditor::ProcessEvents(){
+  bool processed=false;
+  for(const cgeditor::Event &e: status.Events){
+    HandleEvent(e);
+    processed=true;
+  }
+  status.Events.clear();
+  return processed;
+}
+
 } // namespace cgeditor

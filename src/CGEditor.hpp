@@ -23,10 +23,14 @@ class CGEditor {
 
 protected:
   Status status;
-  ///@brief Draw the Chess Game Editor on the canvas using current status
+  /// @brief Draw the Chess Game Editor on the canvas using current status
   void Draw();
+  /// @brief Process the events generated during the drawing
+  bool ProcessEvents();
   /// @brief Draw an element on the canvas
   virtual void DrawElement(const Element &) = 0;
+  /// @brief Handle event that occured during editor drawing
+  virtual void HandleEvent(const Event &) = 0;
 
 public:
   CGEditor();
