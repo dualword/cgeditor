@@ -18,6 +18,10 @@ include_directories(src)
 file(GLOB_RECURSE SRC_CPP_FILES src/*.cpp)
 add_library(cgeditor SHARED ${SRC_CPP_FILES})
 
+# ChessMoveInterface
+add_subdirectory(libs/chess-move-interface)
+include_directories(${CMI_INCLUDE_DIR})
+
 # Examples
 set(COMPILE_EXAMPLES FALSE CACHE BOOL "Compiling included examples")
 if(COMPILE_EXAMPLES)

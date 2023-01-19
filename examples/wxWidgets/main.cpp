@@ -38,7 +38,7 @@ private:
     CGEditor::status.CanvasWidth = sz.GetWidth();
     CGEditor::status.CanvasHeight = sz.GetHeight();
     CGEditor::status.UseMoveIcons =
-        true; // Piece image should be drawn before the move ?
+        false; // Piece image should be drawn before the move ?
 
     const wxPoint pt = wxGetMousePosition();
     CGEditor::status.MouseX = pt.x - this->GetScreenPosition().x;
@@ -90,7 +90,7 @@ private:
                     e.y + (e.height - sz.GetHeight()) / 2));
   }
 
-  /**
+ /**
    * @brief CGEditor is going to call this method with the elements to draw on
    * the canvas
    *
@@ -161,22 +161,27 @@ private:
       str = "Comment Selected";
     else if (e.type == cgeditor::Event::Type::Promote) {
       str = "Promote";
-      static_cast<MyHalfMove *>(e.move)->MyHalfMove::Promote();
+      e.move->Promote();
+      SyncCache();
     } else if (e.type == cgeditor::Event::Type::Delete) {
       str = "Delete";
-      if (e.move->Parent != NULL) {
-        static_cast<MyHalfMove *>(e.move)->GetParent()->MyHalfMove::RemoveChild(
-            (MyHalfMove *)e.move);
+      if (e.move->GetParent() != nullptr) {
+        static_cast<MyHalfMove *>((e.move)->GetParent())->RemoveChild(static_cast<MyHalfMove *>(e.move));
+        delete static_cast<MyHalfMove *>(e.move);
+        SyncCache(); // Do not forget to sync the cache
       } else {
-        CGEditor::status.Moves = NULL;
+        CGEditor::status.Moves = nullptr;
       }
     } else if (e.type == cgeditor::Event::Type::SetAsMainline) {
       str = "Set as main line";
-      static_cast<MyHalfMove *>(e.move)->MyHalfMove::SetAsMainline();
+      e.move->SetAsMainline();
+      SyncCache();
     } else if (e.type == cgeditor::Event::Type::Goto) {
       str = "Goto move";
     }
-    std::cout << "Event received: " << str << std::endl << std::flush;
+    wxLogDebug("Event received: %s", str);
+    if(CGEditor::status.Moves != nullptr && !CGEditor::status.Moves->IsConsistent())
+      wxLogError("ERROR!! The tree of moves is not consistent anymore! Something wrong happends");
   }
 
   // wxWidgets specific

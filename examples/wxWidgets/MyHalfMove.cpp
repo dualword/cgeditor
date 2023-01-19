@@ -1,114 +1,6 @@
 #include "MyHalfMove.hpp"
 
-MyHalfMove::MyHalfMove(std::string move) { this->move = move; }
-MyHalfMove::~MyHalfMove() {}
-
-void MyHalfMove::AddVariation(MyHalfMove *m) {
-  m->IsBlack = this->IsBlack;
-  m->Number = this->Number;
-  MyHalfMove::variations.push_back(m);
-  cgeditor::CGEHalfMove::variations.push_back(m);
-  m->SetParent(this);
-}
-
-void MyHalfMove::SetMainline(MyHalfMove *m) {
-  if (!this->IsBlack) {
-    m->IsBlack = true;
-    m->Number = this->Number;
-  } else {
-    m->IsBlack = false;
-    m->Number = this->Number + 1;
-  }
-  MyHalfMove::mainline = m;
-  cgeditor::CGEHalfMove::MainLine = m;
-  if (m != NULL) {
-    m->SetParent(this);
-  }
-}
-void MyHalfMove::SetParent(MyHalfMove *m) {
-  MyHalfMove::parent = m;
-  CGEHalfMove::Parent = m;
-}
-void MyHalfMove::RemoveChild(MyHalfMove *m) {
-  std::uint32_t i = 0;
-  bool found = false;
-  for (i; i < MyHalfMove::variations.size(); i++) {
-    if (MyHalfMove::variations[i] == m) {
-      found = true;
-      break;
-    }
-  }
-  if (found) {
-    MyHalfMove::variations.erase(MyHalfMove::variations.begin() + i);
-  }
-  if (MyHalfMove::MainLine == m) {
-    MyHalfMove::MainLine = NULL;
-  }
-  cgeditor::CGEHalfMove::RemoveChild((CGEHalfMove *)m);
-}
-
-MyHalfMove *MyHalfMove::GetParent() { return (parent); }
-
-MyHalfMove *MyHalfMove::GetRoot() {
-  MyHalfMove *m = this;
-  MyHalfMove *p = MyHalfMove::parent;
-  while (p != NULL) {
-    if (p->mainline != m) {
-      return (m);
-    }
-    m = p;
-    p = m->MyHalfMove::parent;
-  }
-  return (m);
-}
-
-void MyHalfMove::SetAsMainline() {
-  MyHalfMove *root = GetRoot();
-  MyHalfMove *lastRoot;
-  do {
-    lastRoot = root;
-    root->MyHalfMove::Promote();
-    root = GetRoot();
-  } while (root != lastRoot);
-
-  // std::cout << IsVariation() << std::endl << std::flush;
-}
-
-void MyHalfMove::Promote() {
-  if (MyHalfMove::parent != NULL) {
-    MyHalfMove *p = MyHalfMove::parent;
-    if (p->MyHalfMove::mainline != this) {
-      if (MyHalfMove::parent->MyHalfMove::parent != NULL) {
-        MyHalfMove *pp = MyHalfMove::parent->MyHalfMove::parent;
-        if (pp->MyHalfMove::mainline == p) {
-          pp->MyHalfMove::SetMainline(this);
-        } else {
-          pp->AddVariation(this);
-          pp->MyHalfMove::RemoveChild(p);
-        }
-      }
-      if (p->MyHalfMove::mainline == this) {
-        p->MyHalfMove::SetMainline(NULL);
-      } else {
-        p->MyHalfMove::RemoveChild(this);
-      }
-      this->AddVariation(p);
-    }
-  }
-}
-
-bool MyHalfMove::IsVariation() {
-  MyHalfMove *m = this;
-  MyHalfMove *p = MyHalfMove::parent;
-  while (p != NULL) {
-    if (p->mainline != m) {
-      return (true);
-    }
-    m = p;
-    p = m->MyHalfMove::parent;
-  }
-  return (false);
-}
+MyHalfMove::MyHalfMove(std::string move){SetSAN(move); }
 
 MyHalfMove *BuildExampleGame() {
   MyHalfMove *m = new MyHalfMove("e4");
@@ -128,7 +20,7 @@ MyHalfMove *BuildExampleGame() {
 
   m2 = new MyHalfMove("Bc4");
   m->SetMainline(m2);
-  m->comment="Italian Opening";
+  m->SetComment("Italian Opening");
   m = m2;
 
   m2 = new MyHalfMove("Bc5");
@@ -136,7 +28,7 @@ MyHalfMove *BuildExampleGame() {
   m = m2;
 
   m2 = new MyHalfMove("c3");
-  m2->comment="Giuoco Pianissimo";
+  m2->SetComment("Giuoco Pianissimo");
   m->SetMainline(m2);
   m = m2;
 
@@ -158,7 +50,7 @@ MyHalfMove *BuildExampleGame() {
 
   {
     MyHalfMove *var = new MyHalfMove("Re1");
-    var->comment="Also possible";
+    var->SetComment("Also possible");
     m->AddVariation(var);
 
     MyHalfMove *var2 = new MyHalfMove("a6");
@@ -185,8 +77,8 @@ MyHalfMove *BuildExampleGame() {
 
   m2 = new MyHalfMove("a6");
   m->SetMainline(m2);
-  m->comment="Test for a very long comment, to see how line breaks are handle by the framework.";
-  m->comment+="Test for a very long comment, to see how line breaks are handle by the framework.";
+  m->SetComment("Test for a very long comment, to see how line breaks are handle by the framework.");
+  m->SetComment(m->GetComment()+"Test for a very long comment, to see how line breaks are handle by the framework.");
   m = m2;
 
   m2 = new MyHalfMove("Bb3");
@@ -198,7 +90,7 @@ MyHalfMove *BuildExampleGame() {
   m = m2;
 
   m2 = new MyHalfMove("Re1");
-  m2->nag="!!";
+  m2->SetNAG(3);
   m->SetMainline(m2);
   m = m2;
 

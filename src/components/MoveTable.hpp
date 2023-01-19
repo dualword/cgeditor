@@ -1,5 +1,6 @@
 #include "Component.hpp"
 #include <cmath>
+#include <unordered_map>
 
 #define IS_VISIBLE(e)                                                          \
   (((e.x + status->ScrollX) >= 0 &&                                            \
@@ -46,19 +47,25 @@
 
 namespace cgeditor {
 class MoveTable : public Component {
-  std::uint32_t UpdateMoves(CGEHalfMove *, std::uint32_t, std::uint32_t,bool only_black);
+  typedef struct MoveState {
+    bool IsFolded=false;
+    bool IsHidden=false;
+  } MoveState;
+  std::uint32_t UpdateMoves(CMI::HalfMove *, std::uint32_t, std::uint32_t,bool only_black);
   std::int32_t CurrentMove;
   std::vector<Element> VariationMargins;
+  /// @brief Must be kept consistent:
+  std::unordered_map<CMI::HalfMove*,MoveState> MovesStates;
   bool IsMouseOver(const Element &e) const;
-  std::uint32_t DrawComment(CGEHalfMove *m, std::uint32_t line, std::uint32_t indent,
+  std::uint32_t DrawComment(CMI::HalfMove *m, std::uint32_t line, std::uint32_t indent,
                            const Element &move_bound, const char &indent_black);
-  std::uint32_t DrawVariations(CGEHalfMove *m, std::uint32_t line, std::uint32_t indent,
+  std::uint32_t DrawVariations(CMI::HalfMove *m, std::uint32_t line, std::uint32_t indent,
                               const Element &move_bound,
                               const char &indent_black);
-
 public:
   MoveTable(Status *s);
   void Refresh();
   std::vector<Element> GetVariationsMarging() { return (VariationMargins); }
+  void SyncCache();
 };
 } // namespace cgeditor

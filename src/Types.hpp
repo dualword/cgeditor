@@ -1,7 +1,8 @@
 #pragma once
 
-#include "CGEHalfMove.hpp"
+#include "CMI.hpp"
 #include <string>
+#include <unordered_map>
 
 namespace cgeditor {
 
@@ -54,7 +55,7 @@ typedef struct Event {
   enum Type { CommentSelected, Promote, Delete, SetAsMainline, Goto, None };
   Type type = None;
   /// @brief Move related to the event
-  CGEHalfMove *move = NULL;
+  CMI::HalfMove *move = nullptr;
 } Event;
 
 /**
@@ -92,10 +93,11 @@ typedef struct Status {
   double MoveTableMaxX = 0, MoveTableMaxY = 0;
   /// @brief User should set it to true when mouse is dragging
   bool IsDrag = false;
-  CGEHalfMove *Moves = NULL;
-  CGEHalfMove *CurrentMove = NULL;
-  CGEHalfMove *SelectedMove = NULL;
+  CMI::HalfMove *Moves = nullptr;
+  CMI::HalfMove *CurrentMove = nullptr;
+  CMI::HalfMove *SelectedMove = nullptr;
   std::vector<Event> Events;
+  std::unordered_map<std::uint8_t, std::string> NagTable;
 } Status;
 
 } // namespace cgeditor

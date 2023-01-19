@@ -27,11 +27,16 @@ protected:
   void Draw();
   /// @brief Process the events generated during the drawing
   bool ProcessEvents();
+  /// @brief Synchronize the editor cache (must be called when game was modified from outside the editor)
+  void SyncCache();
   /// @brief Draw an element on the canvas
   virtual void DrawElement(const Element &) = 0;
   /// @brief Handle event that occured during editor drawing
   virtual void HandleEvent(const Event &) = 0;
-
+  /// @brief Convert NAG id to symbol using the NagTable
+  std::string GetNAGSymbol(const std::uint8_t) const;
+  /// @brief Convert NAG symbol to id using the NagTable
+  std::uint8_t GetNAGId(const std::string&) const;
 public:
   CGEditor();
   ~CGEditor();

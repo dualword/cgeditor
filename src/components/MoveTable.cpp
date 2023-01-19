@@ -1,5 +1,4 @@
 #include "MoveTable.hpp"
-#include <iostream>
 
 namespace cgeditor {
 
@@ -11,8 +10,8 @@ void MoveTable::Refresh() {
   elements.clear();
   VariationMargins.clear();
   CurrentMove = -1; // No current move by default
-  if (status->Moves != NULL) {
-    UpdateMoves(status->Moves, 0, 0, status->Moves->IsBlack);
+  if (status->Moves != nullptr) {
+    UpdateMoves(status->Moves, 0, 0, status->Moves->IsBlack());
     // We only set the type after the call to UpdateMoves()
     // This way only a single move will be the current move
     if (CurrentMove >= 0) {
@@ -46,19 +45,19 @@ bool MoveTable::IsMouseOver(const Element &e) const {
                    status->MouseY - status->ScrollY));
 }
 
-std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
+std::uint32_t MoveTable::UpdateMoves(CMI::HalfMove *m, std::uint32_t line,
                                      std::uint32_t indent, bool only_black) {
 
   //---------- Check black or white ----------
   char indent_black = 0;
-  if (m->IsBlack) {
+  if (m->IsBlack()) {
     indent_black++;
   }
 
   //---------- Create temporary move surrounding area ----------
   Element move_bound;
   move_bound.prop = Property::Move;
-  if (m->IsBlack) {
+  if (m->IsBlack()) {
     move_bound.prop |= Property::Black;
   }
   move_bound.x = status->MarginBarWidth +
@@ -67,7 +66,7 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
   move_bound.y = status->MoveHeight * line;
   move_bound.width = status->MoveWidth;
   move_bound.height = status->MoveHeight;
-  move_bound.text = m->move;
+  move_bound.text = m->GetSAN();
   move_bound.ShouldApplyScroll = true;
   bool isMouseOver = IsMouseOver(move_bound);
 
@@ -102,12 +101,12 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
     // Move
     Element e;
     e.prop = move_bound.prop | Property::Text;
-    e.text = m->move;
-    if (m->move.size() > 0) {
-      char c = m->move[0];
+    e.text = m->GetSAN();
+    if (m->GetSAN().size() > 0) {
+      char c = m->GetSAN()[0];
       if (!(c == 'a' || c == 'b' || c == 'c' || c == 'd' || c == 'e' ||
             c == 'f' || c == 'g' || c == 'h' || c == 'O' || c == '0')) {
-        e.text = m->move.substr(1, m->move.size());
+        e.text = m->GetSAN().substr(1, m->GetSAN().size());
         if (c == 'N') {
           img.prop |= Property::Knight;
         } else if (c == 'B') {
@@ -137,9 +136,9 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
   }
 
   //---------- NAG ----------
-  if(m->nag.size()>0){
+  if(m->GetNAG()>0){
     Element nag;
-    nag.text = m->nag;
+    nag.text = status->NagTable[m->GetNAG()];
     nag.x = move_bound.x + status->MoveWidth - status->NagWidth - status->NagRightMargin;
     nag.y = status->MoveHeight * line;
     nag.width = status->NagWidth;
@@ -150,15 +149,15 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
   }
 
   //---------- Move number in marge or for variation ----------
-  if (indent == 0 && (!m->IsBlack || only_black)) {
-    DRAW_NB(0, status->MoveHeight * line, m->Number);
-  } else if (indent > 0 && (!m->IsBlack || only_black)) {
+  if (indent == 0 && (!m->IsBlack() || only_black)) {
+    DRAW_NB(0, status->MoveHeight * line, m->GetNumber());
+  } else if (indent > 0 && (!m->IsBlack() || only_black)) {
     if (only_black) {
       DRAW_NB_VAR((move_bound.x - status->MoveWidth) - status->MarginBarWidth,
-                  status->MoveHeight * line, m->Number);
+                  status->MoveHeight * line, m->GetNumber());
     } else {
       DRAW_NB_VAR(move_bound.x - ((indent + 1) / 2 * status->MarginBarWidth),
-                  status->MoveHeight * line, m->Number);
+                  status->MoveHeight * line, m->GetNumber());
     }
   }
 
@@ -176,35 +175,50 @@ std::uint32_t MoveTable::UpdateMoves(CGEHalfMove *m, std::uint32_t line,
   }
 
   //---------- Comments ----------
-  if (m->comment.size() > 0) {
+  if (m->GetComment().size() > 0) {
     line = DrawComment(m, line, indent, move_bound, indent_black);
   }
 
   //---------- Variations ----------
-  if (m->variations.size() > 0) {
+  if (m->GetVariations().size() > 0) {
     line = DrawVariations(m, line, indent, move_bound, indent_black);
   }
 
   //---------- Mainline ----------
-  if (m->MainLine != NULL) {
-    only_black = (m->MainLine->IsBlack &&
-                  (m->comment.size() > 0 || m->variations.size()));
-    if (m->IsBlack) {
-      line = UpdateMoves(m->MainLine, line + 1, indent, only_black);
+  if (m->GetMainline() != nullptr) {
+    only_black = (m->GetMainline()->IsBlack() &&
+                  (m->GetComment().size() > 0 || m->GetVariations().size()));
+    if (m->IsBlack()) {
+      line = UpdateMoves(m->GetMainline(), line + 1, indent, only_black);
     } else {
-      line = UpdateMoves(m->MainLine, line, indent, only_black);
+      line = UpdateMoves(m->GetMainline(), line, indent, only_black);
     }
   }
 
   return (line);
 }
 
-std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
+void MoveTable::SyncCache(){
+  if(status->Moves != nullptr){
+    std::vector<CMI::HalfMove*> toDelete;
+    for (auto const& entry : MovesStates){
+      if(!status->Moves->Contains(entry.first))
+        toDelete.push_back(entry.first);
+    }
+    for(auto key: toDelete){
+      MovesStates.erase(key);
+    }
+  }
+  else
+    MovesStates.clear();
+}
+
+std::uint32_t MoveTable::DrawComment(CMI::HalfMove *m, std::uint32_t line,
                                      std::uint32_t indent,
                                      const Element &move_bound,
                                      const char &indent_black) {
   // Show three dots
-  if (!m->IsBlack) {
+  if (!m->IsBlack()) {
     DRAW_DOTS(status->MarginBarWidth + status->MoveWidth * (indent + 1) +
                   ((indent + 1) / 2 * status->MarginBarWidth),
               status->MoveHeight * line);
@@ -212,7 +226,7 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
   line++; // Goto the right line
 
   /// ----- Compute comment bounding box values:
-  int nchar=m->comment.size();
+  int nchar=m->GetComment().size();
   int nline=ceil((double)nchar/(double)status->CommentCharPerLine);
   std::uint16_t nrow=ceil(((nline*status->CommentCharHeight)+2*status->CommentPadding)/status->MoveHeight);
   int width=status->CommentCharPerLine*status->CommentCharWidth+2*status->CommentPadding;
@@ -249,7 +263,7 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
   l.height=status->CommentCharHeight;
   l.ShouldApplyScroll = true;
   for(int i=0;i<nline;i++){
-    l.text=m->comment.substr(i*status->CommentCharPerLine,status->CommentCharPerLine);
+    l.text=m->GetComment().substr(i*status->CommentCharPerLine,status->CommentCharPerLine);
     // Remove leading space:
     if(l.text.size()>2 && l.text[0]==' '){
       l.text=l.text.substr(1,l.text.size());
@@ -264,18 +278,18 @@ std::uint32_t MoveTable::DrawComment(CGEHalfMove *m, std::uint32_t line,
   }
   line += nrow; // Skip right amount of lines
   // ----- Since we already increment line for black later on:
-  if (m->IsBlack || m->variations.size() > 0) {
+  if (m->IsBlack() || m->GetVariations().size() > 0) {
     line--;
   }
   return (line);
 }
 
-std::uint32_t MoveTable::DrawVariations(CGEHalfMove *m, std::uint32_t line,
+std::uint32_t MoveTable::DrawVariations(CMI::HalfMove *m, std::uint32_t line,
                                         std::uint32_t indent,
                                         const Element &move_bound,
                                         const char &indent_black) {
   // Show three dots next to move if white turn
-  if ((m->variations.size() == 0) && !m->IsBlack) {
+  if ((m->GetVariations().size() == 0) && !m->IsBlack()) {
     DRAW_DOTS(status->MarginBarWidth + status->MoveWidth * (indent + 1),
               status->MoveHeight * line);
   }
@@ -284,22 +298,22 @@ std::uint32_t MoveTable::DrawVariations(CGEHalfMove *m, std::uint32_t line,
     Element e;
     e.prop = Property::Rectangle | Property::Button;
     e.x = move_bound.x + status->MoveWidth;
-    if (!m->IsBlack)
+    if (!m->IsBlack())
       e.x += status->MoveWidth;
     e.y = move_bound.y + std::ceil(status->MoveHeight / 4);
     e.width = std::ceil(status->MoveHeight / 2);
     e.height = e.width;
     e.ShouldApplyScroll = true;
     if (status->LeftClick && IsMouseOver(e)) {
-      m->Folded = !m->Folded;
+      MovesStates[m].IsFolded=!MovesStates[m].IsFolded;
     }
-    if (!m->Folded) {
+    if (!MovesStates[m].IsFolded) {
       e.prop |= Property::On;
     }
     elements.push_back(e);
   }
-  if (!m->Folded) {
-    for (CGEHalfMove *v : m->variations) {
+  if (!MovesStates[m].IsFolded) {
+    for (CMI::HalfMove *v : m->GetVariations()) {
       // For each variation show show/hide button
       {
         Element e;
@@ -313,22 +327,22 @@ std::uint32_t MoveTable::DrawVariations(CGEHalfMove *m, std::uint32_t line,
         e.height = e.width;
         e.ShouldApplyScroll = true;
         if (status->LeftClick && IsMouseOver(e)) {
-          v->Hide = !v->Hide;
+          MovesStates[v].IsHidden = !MovesStates[v].IsHidden;
         }
-        if (!v->Hide) {
+        if (!MovesStates[v].IsHidden) {
           e.prop |= Property::On;
         }
         elements.push_back(e);
       }
-      if (!v->Hide) {
-        line = UpdateMoves(v, line + 1, indent + 1, v->IsBlack);
+      if (!MovesStates[v].IsHidden) {
+        line = UpdateMoves(v, line + 1, indent + 1, v->IsBlack());
       } else {
         line++;
       }
     }
   }
   // New line after variation
-  if (m->MainLine != NULL && m->MainLine->IsBlack) {
+  if (m->GetMainline() != nullptr && m->GetMainline()->IsBlack()) {
     line++;
   }
   return (line);

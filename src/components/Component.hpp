@@ -14,6 +14,7 @@ public:
   Component(Status *s) : status(s){};
   std::vector<Element> GetElements() { return (this->elements); }
   virtual void Refresh() = 0;
+  virtual void SyncCache() {};
 };
 
 } // namespace cgeditor
